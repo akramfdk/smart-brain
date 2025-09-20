@@ -1,7 +1,6 @@
 import './FaceRecognition.css'
 
 const FaceRecognition = ({ imageUrl, box }) => {
-    // console.log(box);
     return (
         <div className="center ma">
             <div className="relative mt2">
