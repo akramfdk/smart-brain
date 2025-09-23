@@ -118,7 +118,24 @@ class App extends Component {
     fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/versions/" + MODEL_VERSION_ID + "/outputs", getURLrequestOptions(this.state.input))
         .then(response => response.json())
         // .then(result => console.log(result.outputs[0].data.regions))
-        .then(result => this.displayFaceBox(this.calculateFaceLocation(result)))
+        .then(result => {
+          if (result) {
+            fetch('http://localhost:3000/image',
+              {
+                method: 'put',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                  id: this.state.user.id
+                })
+              })
+              .then(res => res.json())
+              .then(count => {
+                console.log(count);
+                this.setState(Object.assign(this.state.user, {entries: count}));
+              })
+          }
+          this.displayFaceBox(this.calculateFaceLocation(result))
+        })
         .catch(error => console.log('error', error));
   }
 
@@ -133,14 +150,14 @@ class App extends Component {
   }
 
   render(){
-    const { isSignedIn, imageUrl, route, box } = this.state;
+    const { isSignedIn, imageUrl, route, box, user } = this.state;
     return (
       <div className='App'>
         <ParticlesBg className="particles" type="cobweb" bg={true} color="#ffffff" />
         <Navigation onRouteChange={this.onRouteChange} isSignedIn={isSignedIn} />
         {route === "home"
          ? <div> <Logo />
-        <Rank />
+        <Rank name={user.name} entries={user.entries} />
         <ImageLinkForm 
           onInputChange={this.onInputChange} 
           onButtonSubmit={this.onButtonSubmit} 
@@ -150,7 +167,7 @@ class App extends Component {
         : (
           route === "register"
           ? <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
-          : <SignIn onRouteChange={this.onRouteChange}/>
+          : <SignIn onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
         )
         }
       </div>
