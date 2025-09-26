@@ -10,45 +10,6 @@ import Register from './components/Register/Register';
 
 import ParticlesBg from 'particles-bg'
 
-
-const MODEL_ID = 'face-detection';
-const MODEL_VERSION_ID = '6dc7e46bc9124c5c8824be4822abe105';
-
-const getURLrequestOptions = (imageUrl) => {
-  const PAT = '251fd779de914c769fbc29a916a12cee';
-  const USER_ID = 'kz4p8xr695tb';
-  const APP_ID = 'smart-brain';
-  const IMAGE_URL = imageUrl;
-
-  const raw = JSON.stringify({
-    "user_app_id": {
-        "user_id": USER_ID,
-        "app_id": APP_ID
-    },
-    "inputs": [
-        {
-            "data": {
-                "image": {
-                    "url": IMAGE_URL
-                    // "base64": IMAGE_BYTES_STRING
-                }
-            }
-        }
-    ]
-  });
-
-  const requestOptions = {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Authorization': 'Key ' + PAT
-    },
-    body: raw
-  };
-
-  return requestOptions;
-}
-
 const initialState = {
   input: '',
   imageUrl: '',
@@ -116,7 +77,13 @@ class App extends Component {
 
     this.setState({imageUrl: this.state.input});
 
-    fetch("https://api.clarifai.com/v2/models/" + MODEL_ID + "/versions/" + MODEL_VERSION_ID + "/outputs", getURLrequestOptions(this.state.input))
+    fetch('http://localhost:3000/imageurl', {
+      method: "post",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        input: this.state.input,
+      })
+    })
         .then(response => response.json())
         // .then(result => console.log(result.outputs[0].data.regions))
         .then(result => {
@@ -131,7 +98,7 @@ class App extends Component {
               })
               .then(res => res.json())
               .then(count => {
-                console.log(count);
+                // console.log(count);
                 this.setState(Object.assign(this.state.user, {entries: count}));
               })
               .catch(console.log)
