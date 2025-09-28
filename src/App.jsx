@@ -77,7 +77,7 @@ class App extends Component {
 
     this.setState({imageUrl: this.state.input});
 
-    fetch('http://localhost:3000/imageurl', {
+    fetch('https://glacial-tor-76083-44d43ee27c1a.herokuapp.com/imageurl', {
       method: "post",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
@@ -88,7 +88,7 @@ class App extends Component {
         // .then(result => console.log(result.outputs[0].data.regions))
         .then(result => {
           if (result) {
-            fetch('http://localhost:3000/image',
+            fetch('https://glacial-tor-76083-44d43ee27c1a.herokuapp.com/image',
               {
                 method: 'put',
                 headers: {'Content-Type': 'application/json'},
